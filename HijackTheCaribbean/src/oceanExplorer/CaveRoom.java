@@ -1,5 +1,7 @@
 package oceanExplorer;
 
+import testRooms.WhirlpoolRoom;
+
 public class CaveRoom {
 
 	private String description; //Tells the room looks like
@@ -168,7 +170,8 @@ public class CaveRoom {
 			}
 		}
 		//3. Setup rooms
-		
+		CaveExplorer.caves[1][2] = new WhirlpoolRoom();
+		CaveExplorer.caves[1][2].setConnection(WEST,CaveExplorer.caves[1][1],new Door());
 		//4. Set your starting room:
 		CaveExplorer.currentRoom = CaveExplorer.caves[0][1];
 		CaveExplorer.currentRoom.enter();

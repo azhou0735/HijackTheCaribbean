@@ -39,7 +39,7 @@ public class WhirlpoolRoom extends CaveRoom {
 		directionFacing = (int)(Math.random()*4);
 		//Will be random for now
 		/** HAVE TO MAKE getLastDirection() WORK PROPERLY IN INVENTORY**/
-		System.out.println("You are facing "+directionFacing+".");
+		System.out.println("You are facing "+translateDirection(directionFacing)+".");
 		directionToAvoid = updateAvoidDirection(directionFacing);
 	}
 	
@@ -65,6 +65,11 @@ public class WhirlpoolRoom extends CaveRoom {
 		}
 		return ogDir - 1;
 	}
+	
+	public static String translateDirection(int direction) {
+		String[] dir = {"North", "East", "South", "West"};
+		return dir[direction];
+	}
 	//OVERIDE
 
 	/**
@@ -82,7 +87,7 @@ public class WhirlpoolRoom extends CaveRoom {
 			directionFacing = directionToLeft(directionFacing);
 			directionToAvoid = updateAvoidDirection(directionFacing);
 		
-			System.out.println("You are now facing "+directionFacing+".");
+			System.out.println("You are now facing "+translateDirection(directionFacing)+".");
 			
 			
 		if(turnCount == 0) {
