@@ -2,6 +2,7 @@ package testRooms;
 
 import oceanExplorer.CaveExplorer;
 import oceanExplorer.CaveRoom;
+import oceanExplorer.Door;
 
 /**
  * Whirlpool room
@@ -15,97 +16,95 @@ import oceanExplorer.CaveRoom;
 public class WhirlpoolRoom extends CaveRoom {
 
 	private CaveRoom[] borderingRooms;
+	private Door[] doors;
 	private String currentValidKeys;
 	
 	private int turnCount; //amount of turns until the whirlpool disappears
 	private int distanceFromCenter; //distance the user is from the center of the whirlpool(dying)
 	
 	private int directionFacing; //direction the user's ship is facing
-	private int directionToAvoid; //direction the user has to click in order to avoid moving towards the center
+	
+	private String trueDescription;
 
 	public WhirlpoolRoom() {
-		super("You fall into a whirlpool");
-		turnCount = (int)(Math.random()*4)+1;
+		super("You are in a whirlpool");
+		borderingRooms = new CaveRoom[4];
+		doors = new Door[4];
+		setDirections();
+		
+		trueDescription = "The ship is in a whirlpool";
+	
+		turnCount = (int)(Math.random()*6)+4;
 		distanceFromCenter = turnCount-1; //user will have to input the right thing at least once to survive
 		
 		/**
-		 * Whirlpool will always spin counter clock-wise (coriolis effect)
-		 * So the center will be to the EAST when coming from the NORTH
-		 * and WEST when coming from the SOUTH
-		 * from EAST to NORTH
-		 * from WEST to SOUTH
+		 * Whirlpool will always spin counter clock-wise (coriolis effect in S Hemisphere)
+		 * So the center will always be to the left
 		 */
 		//directionFacing = CaveExplorer.inventory.getLastDirection(); //will get the first direction the user is facing
 		directionFacing = (int)(Math.random()*4);
 		//Will be random for now
 		/** HAVE TO MAKE getLastDirection() WORK PROPERLY IN INVENTORY**/
-		System.out.println("You are facing "+translateDirection(directionFacing)+".");
-		directionToAvoid = updateAvoidDirection(directionFacing);
+		
+		trueDescription += "\nThe ship is pointed to the "+translateDirection(directionFacing)+"."; //always tell the user their direction
+		
+		setDescription(trueDescription);
 	}
 	
-	public int updateAvoidDirection(int userDirection) {
-		if(userDirection == NORTH) {
-			return EAST;
-		}
-		if(userDirection == SOUTH) {
-			return WEST;
-		}
-		if(userDirection == EAST) {
-			return NORTH;
-		}
-		if(userDirection == WEST) {
-			return SOUTH;
-		}
-		return -1;
-	}
+
 	
-	public int directionToLeft(int ogDir){
-		if(ogDir == 0){
+	public int centerDirection(int direction){
+		if(direction == 0){
 		   return 3;
 		}
-		return ogDir - 1;
+		return direction - 1;
 	}
 	
 	public static String translateDirection(int direction) {
 		String[] dir = {"North", "East", "South", "West"};
 		return dir[direction];
 	}
+	
 	//OVERIDE
-
-	/**
-	 * 
-	 */
+	
 	public void performAction(int direction) {
-		if(direction == directionToAvoid) {
-			//user failed to avoid center
+		if(direction == centerDirection(directionFacing)) {
+			//user heads deeper into the center and faster
+			distanceFromCenter -= 2;
+			trueDescription = "The ship heads deeper to the center.";
+		}else if(direction == oppositeDirection(centerDirection(directionFacing))){
+			//user goes the proper direction against the center
+			trueDescription = "The ship maintains its distance from the center.";
+		}else {
 			distanceFromCenter --;
-			System.out.println("You fall closer to the center.");
+			trueDescription = "The whirlpool pulls the ship in closer.";
 		}
-			//distance doesn't change
 			turnCount --;
-		//change the direction (basically turn left)
-			directionFacing = directionToLeft(directionFacing);
-			directionToAvoid = updateAvoidDirection(directionFacing);
+			
+		//change the direction (basically turn left) since user is going in a circle
+			directionFacing = centerDirection(directionFacing);
 		
-			System.out.println("You are now facing "+translateDirection(directionFacing)+".");
-			
-			
+			trueDescription += "\nThe ship is pointed to the "+translateDirection(directionFacing)+".";
+			setDescription(trueDescription);
+		
+		//user survives
 		if(turnCount == 0) {
-			System.out.println("The whirlpool disappears.");
+			setDescription("The whirlpool disappears.");
+			setContents("x");
 			//OPTIONAL: user is launched towards the last direction they were facing
 		}
-		if(distanceFromCenter == 0) {
+		if(distanceFromCenter <= 0) {
 			//user loses
-			System.out.println("The whirlpool consumes your ship. YOU LOSE.");
+			setDescription("The whirlpool consumes your ship. YOU LOSE.");
 		}
 	}
 	
 	public void enter() {
-		setContents("x");
+		setContents("G");
 	}
 
 	public void respondToKey(int direction) {
-		if(turnCount < 1){
+		if(turnCount == 0){
 			if(direction < 4) {
 				if(borderingRooms[direction] != null && 
 						getDoor(direction) != null) {
@@ -119,6 +118,8 @@ public class WhirlpoolRoom extends CaveRoom {
 		else {
 			performAction(direction);
 		}
-	} 
+	}
+	
+
 }
 

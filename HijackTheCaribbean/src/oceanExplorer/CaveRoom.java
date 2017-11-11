@@ -86,9 +86,9 @@ public class CaveRoom {
 	}
 	
 	public int oppositeDirection(int direction) {
-		//int[] opposites = {2, 3, 0, 1};
-		//return opposites[direction];
-		return (direction + 2)%4;
+		int[] opposites = {2, 3, 0, 1};
+		return opposites[direction];
+		//return (direction + 2)%4;
 	}
 
 	public void addRoom(int direction, CaveRoom cave, Door door) {
@@ -171,7 +171,9 @@ public class CaveRoom {
 		}
 		//3. Setup rooms
 		CaveExplorer.caves[1][2] = new WhirlpoolRoom();
-		CaveExplorer.caves[1][2].setConnection(WEST,CaveExplorer.caves[1][1],new Door());
+		Door whirlPoolDoor = new Door();
+		//whirlPoolDoor.setDescription("disturbance of water");
+		CaveExplorer.caves[1][2].setConnection(WEST,CaveExplorer.caves[1][1],whirlPoolDoor);
 		//4. Set your starting room:
 		CaveExplorer.currentRoom = CaveExplorer.caves[0][1];
 		CaveExplorer.currentRoom.enter();
