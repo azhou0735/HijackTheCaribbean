@@ -167,24 +167,8 @@ public class CaveRoom {
 						new CaveRoom("This cave has coords ("+row+","+col+")");
 			}
 		}
-		//Steven room goes here
-
-		//end
-		//Dan room
-
-		//end
-		//Andrew room
-
-		//end
-		//Kevin room
-
-		//end
-		//Sunny's Room
-
-		//end
-		//Justin's Room (This will be the room for boss fights)
-
-		//end
+		//3. Setup rooms
+		
 		//4. Set your starting room:
 		CaveExplorer.currentRoom = CaveExplorer.caves[0][1];
 		CaveExplorer.currentRoom.enter();
